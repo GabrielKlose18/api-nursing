@@ -1,0 +1,46 @@
+const express = require('express')
+const mongoose = require('mongoose')
+const cors = require('cors')
+const fs = require('fs')
+const routes = require('./routes')
+const db = require('./config/db')
+require('dotenv').config()
+
+const app = express()
+
+let server
+
+if (process.env.NODE_ENV == 'production') {
+  const credentials = {
+    key: fs.readFileSync(process.env.HTTPS_KEY),
+    cert: fs.readFileSync(process.env.HTTPS_CERT),
+  }
+
+  server = require('https').createServer(credentials, app)
+} else {
+  server = require('http').createServer(app)
+}
+
+const io = require('socket.io')(server)
+
+const connectedUsers = {}
+
+io.on('connection', socket => {
+  console.log('connected:', socket.id)
+
+  const { user } = socket.handshake.query
+  connectedUsers[user] = socket.id
+})
+
+app.use((req, res, next) => {
+  req.io = io
+  req.connectedUsers = connectedUsers
+
+  return next()
+})
+app.use(express.json({limit: '500mb'}));
+app.use(cors())
+app.use(express.json())
+app.use(routes)
+
+server.listen(process.env.PORT)
