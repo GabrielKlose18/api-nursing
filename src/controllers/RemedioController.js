@@ -28,7 +28,7 @@ module.exports = {
   async delete(req, res) {
     const { id } = req.params;
     try {
-      await Remedio.deleteOne({id});
+      await Remedio.deleteOne({_id:id});
       return res.status(200).json({success: true});
     } catch (error) {
       return res.status(500).json({error: "Erro interno"});

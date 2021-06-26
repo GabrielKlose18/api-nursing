@@ -1,39 +1,31 @@
 const axios = require('axios')
-const Dev = require('../models/Dev')
+const Usuario = require('../models/Usuario');
 
 module.exports = {
   async index(req, res) {
-    const { usuario } = req.headers
 
-    const loggedDev = await Dev.findById(usuario)
-
-    const usuarios = await Dev.find({
-      $and: [
-        { _id: { $ne: usuario } }, // não listar o usuário atual
-        { _id: { $nin: loggedDev.likes } }, // não listar usuários que já deu like
-        { _id: { $nin: loggedDev.dislikes } }, // não listar usuários que já deu dislike
-      ],
-    })
+    const usuarios = await Usuario.find({});
 
     return res.status(200).json(usuarios)
   },
 
   async store(req, res) {
-    const { nome, email, cpf, password } = req.body
+    const { nome, email, cpf, senha } = req.body;
     try {
-      const usuarioExists = await Dev.findOne({ email })
+      const usuarioExists = await Usuario.findOne({ email, cpf });
 
     if (usuarioExists) {
-      return res.status(400).json(usuarioExists)
+      return res.status(401).json({error: "usuário já cadastrado"});
     }
 
-    const dev = await Dev.create({
+    const usuario = await Usuario.create({
       nome,
       email,
-      password,
+      cpf,
+      senha,
     })
 
-      return res.status(200).json(dev);
+      return res.status(200).json(usuario);
     } catch (error) {
       console.log('error > ', error);
       return res.status(500).json({error: "Erro interno"});
@@ -42,10 +34,10 @@ module.exports = {
   },
 
   async login(req, res) {
-    const { email, password, } = req.body
+    const { email, senha, } = req.body
 
     try {
-      const usuarioExists = await Dev.findOne({ email, password })
+      const usuarioExists = await Usuario.findOne({ email, senha })
 
       if (!usuarioExists) {
         return res.status(400).json({error: "Senha incorreta!"})
