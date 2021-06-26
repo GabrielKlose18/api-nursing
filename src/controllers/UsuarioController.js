@@ -3,35 +3,34 @@ const Dev = require('../models/Dev')
 
 module.exports = {
   async index(req, res) {
-    const { user } = req.headers
+    const { usuario } = req.headers
 
-    const loggedDev = await Dev.findById(user)
+    const loggedDev = await Dev.findById(usuario)
 
-    const users = await Dev.find({
+    const usuarios = await Dev.find({
       $and: [
-        { _id: { $ne: user } }, // não listar o usuário atual
+        { _id: { $ne: usuario } }, // não listar o usuário atual
         { _id: { $nin: loggedDev.likes } }, // não listar usuários que já deu like
         { _id: { $nin: loggedDev.dislikes } }, // não listar usuários que já deu dislike
       ],
     })
 
-    return res.json(users)
+    return res.status(200).json(usuarios)
   },
 
   async store(req, res) {
-    const { nome: name, email, password, foto: avatar } = req.body
+    const { nome, email, cpf, password } = req.body
     try {
-      const userExists = await Dev.findOne({ email })
+      const usuarioExists = await Dev.findOne({ email })
 
-    if (userExists) {
-      return res.json(userExists)
+    if (usuarioExists) {
+      return res.status(400).json(usuarioExists)
     }
 
     const dev = await Dev.create({
-      name,
+      nome,
       email,
       password,
-      avatar,
     })
 
       return res.status(200).json(dev);
@@ -46,13 +45,13 @@ module.exports = {
     const { email, password, } = req.body
 
     try {
-      const userExists = await Dev.findOne({ email, password })
+      const usuarioExists = await Dev.findOne({ email, password })
 
-      if (!userExists) {
+      if (!usuarioExists) {
         return res.status(400).json({error: "Senha incorreta!"})
       }
 
-      return res.status(200).json(userExists);
+      return res.status(200).json(usuarioExists);
     } catch (error) {
       console.log('error > ', error);
       return res.status(500).json({error: "Erro interno"});
