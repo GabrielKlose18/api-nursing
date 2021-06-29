@@ -11,11 +11,20 @@ module.exports = {
 
   async store(req, res) {
     const { nome, email, cpf, senha } = req.body;
+    console.log('req.body > ',req.body);
     try {
-      const usuarioExists = await Usuario.findOne({ email, cpf });
+      const usuarioExists = await Usuario.findOne({ 
+        $or: [
+        {
+          email,
+        },
+        {
+          cpf
+        }
+      ]});
 
     if (usuarioExists) {
-      return res.status(401).json({error: "usuário já cadastrado"});
+      return res.status(401).json({error: "E-mail ou CPF já cadastrado!"});
     }
 
     const usuario = await Usuario.create({
@@ -40,7 +49,7 @@ module.exports = {
       const usuarioExists = await Usuario.findOne({ email, senha })
 
       if (!usuarioExists) {
-        return res.status(400).json({error: "Senha incorreta!"})
+        return res.status(401).json({error: "E-mail ou senha incorreta!"})
       }
 
       return res.status(200).json(usuarioExists);
