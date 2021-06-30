@@ -58,6 +58,9 @@ module.exports = {
         });
         data_inicio = addHours(data_inicio, periodo.split(':')[0]);
       }
+      if(arrayLembretes.length === 0)
+        return res.status(4001).json({error: "Não foi possível salvar o lembrete. Verifique os campos novamente"});
+      console.log('arrayLembretes > ', arrayLembretes);
       await Lembrete.insertMany(arrayLembretes);
 
       return res.status(200).json({success: true});
