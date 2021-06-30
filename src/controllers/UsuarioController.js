@@ -58,4 +58,16 @@ module.exports = {
       return res.status(500).json({error: "Erro interno"});
     }
   },
+
+  async updateFcm(req, res) {
+    const { usuario_id, token} = req.body
+
+    try {
+      const usuarioExists = await Usuario.findOneAndUpdate({ _id: usuario_id }, {token_fcm: token})
+      return res.status(200).json({success: true});
+    } catch (error) {
+      console.log('error > ', error);
+      return res.status(500).json({error: "Erro interno"});
+    }
+  },
 }

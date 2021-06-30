@@ -12,6 +12,7 @@ routes.get('/', (req, res) => {
 
 routes.get('/usuario', UsuarioController.index);
 routes.post('/usuario', UsuarioController.store);
+routes.post('/updateFcm', UsuarioController.updateFcm);
 routes.post('/login', UsuarioController.login);
 
 routes.get('/remedio', RemedioController.index);
