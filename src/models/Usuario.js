@@ -18,6 +18,9 @@ const UsuarioSchema = new Schema(
       type: String,
       required: true,
     },
+    token_fcm: {
+      type: String,
+    },
   },
   {
     timestamps: true,
