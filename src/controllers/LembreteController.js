@@ -43,7 +43,11 @@ module.exports = {
       const minuto = horario.split(':')[1];
       const data_atual = new Date();
       let data_inicio = new Date(data_atual.getFullYear(), data_atual.getMonth(), data_atual.getDate(), hora, minuto);
-      const data_fim = parseISO(dataFim); // passando a data para formato js
+      
+      var dia  = dataFim.split("/")[0];
+      var mes  = dataFim.split("/")[1];
+      var ano  = dataFim.split("/")[2];
+      const data_fim = new Date(`${ano}-${mes}-${dia} 23:59`); // passando a data para formato js
       let arrayLembretes = [];
       while(data_inicio < data_fim){
         arrayLembretes.push({
@@ -52,7 +56,7 @@ module.exports = {
           remedio,
           usuario: usuario_id
         });
-        data_inicio = addHours(data_inicio, periodo);
+        data_inicio = addHours(data_inicio, periodo.split(':')[0]);
       }
       await Lembrete.insertMany(arrayLembretes);
 

@@ -10,6 +10,11 @@ const RemedioSchema = new Schema(
       type: Number,
       required: true,
     },
+    usuario:{ 
+      type: Schema.Types.ObjectId,
+      ref: 'Usuario',
+      required: true,
+    }
   },
   {
     timestamps: true,
